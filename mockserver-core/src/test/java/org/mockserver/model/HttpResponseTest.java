@@ -120,6 +120,23 @@ public class HttpResponseTest {
     }
 
     @Test
+    public void updatesExistingHeaderIgnoringCase() {
+        assertThat(new HttpResponse().withHeader(new Header("NaMe", "valueOne")).replaceHeader(new Header("name", "valueTwo")).getHeaderList(), containsInAnyOrder(new Header("name", "valueTwo")));
+        assertThat(new HttpResponse().withHeader(new Header("NaMe", "valueOne")).replaceHeader("name", "valueTwo").getHeaderList(), containsInAnyOrder(new Header("name", "valueTwo")));
+    }
+
+    @Test
+    public void removeHeader() {
+        assertThat(new HttpResponse().withHeader(new Header("name", "valueOne")).removeHeader("name").getHeaderList(), hasSize(0));
+    }
+
+    @Test
+    public void removeHeaderIgnoringCase() {
+        assertThat(new HttpResponse().withHeader(new Header("name", "valueOne")).removeHeader("naMe").getHeaderList(), hasSize(0));
+        assertThat(new HttpResponse().withHeader(new Header("NaMe", "valueOne")).removeHeader("name").getHeaderList(), hasSize(0));
+    }
+
+    @Test
     public void returnsCookies() {
         assertEquals(new Cookie("name", "value"), new HttpResponse().withCookies(new Cookie("name", "value")).getCookieList().get(0));
         assertEquals(new Cookie("name", ""), new HttpResponse().withCookies(new Cookie("name", "")).getCookieList().get(0));
